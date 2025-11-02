@@ -33,7 +33,89 @@
 #include <iterator>
 #include <locale>
 #include <string>
+#include <cstring>
+#include <cstdint>
 
+namespace std
+{
+//! Specialization of the std::char_traits template for sf::Uint8
+template <>
+struct char_traits<sf::Uint8>
+{
+    using char_type  = sf::Uint8;
+    using int_type   = int_least16_t;
+    using off_type   = streamoff;
+    using pos_type   = streampos;
+    using state_type = mbstate_t;
+
+    static void assign(char_type& r, const char_type& a) { r = a; }
+    static bool eq(const char_type& a, const char_type& b) { return a == b; }
+    static bool lt(const char_type& a, const char_type& b) { return a < b; }
+    static int compare(const char_type* s1, const char_type* s2, size_t n) { return memcmp(s1, s2, n); }
+    static size_t length(const char_type* s) { size_t i = 0; while (s[i]) ++i; return i; }
+    static const char_type* find(const char_type* s, size_t n, const char_type& a) { return static_cast<const char_type*>(memchr(s, a, n)); }
+    static char_type* move(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memmove(s1, s2, n)); }
+    static char_type* copy(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memcpy(s1, s2, n)); }
+    static char_type* assign(char_type* s, size_t n, char_type a) { return static_cast<char_type*>(memset(s, a, n)); }
+    static int_type not_eof(const int_type& e) { return (e == eof()) ? 0 : e; }
+    static char_type to_char_type(const int_type& e) { return static_cast<char_type>(e); }
+    static int_type to_int_type(const char_type& c) { return static_cast<int_type>(c); }
+    static bool eq_int_type(const int_type& e1, const int_type& e2) { return e1 == e2; }
+    static int_type eof() { return static_cast<int_type>(-1); }
+};
+
+//! Specialization of the std::char_traits template for sf::Uint16
+template <>
+struct char_traits<sf::Uint16>
+{
+    using char_type  = sf::Uint16;
+    using int_type   = int_least32_t;
+    using off_type   = streamoff;
+    using pos_type   = streampos;
+    using state_type = mbstate_t;
+
+    static void assign(char_type& r, const char_type& a) { r = a; }
+    static bool eq(const char_type& a, const char_type& b) { return a == b; }
+    static bool lt(const char_type& a, const char_type& b) { return a < b; }
+    static int compare(const char_type* s1, const char_type* s2, size_t n) { return memcmp(s1, s2, n * sizeof(char_type)); }
+    static size_t length(const char_type* s) { size_t i = 0; while (s[i]) ++i; return i; }
+    static const char_type* find(const char_type* s, size_t n, const char_type& a) { for (size_t i = 0; i < n; ++i) if (eq(s[i], a)) return s + i; return nullptr; }
+    static char_type* move(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memmove(s1, s2, n * sizeof(char_type))); }
+    static char_type* copy(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memcpy(s1, s2, n * sizeof(char_type))); }
+    static char_type* assign(char_type* s, size_t n, char_type a) { for (size_t i = 0; i < n; ++i) s[i] = a; return s; }
+    static int_type not_eof(const int_type& e) { return (e == eof()) ? 0 : e; }
+    static char_type to_char_type(const int_type& e) { return static_cast<char_type>(e); }
+    static int_type to_int_type(const char_type& c) { return static_cast<int_type>(c); }
+    static bool eq_int_type(const int_type& e1, const int_type& e2) { return e1 == e2; }
+    static int_type eof() { return static_cast<int_type>(-1); }
+};
+
+//! Specialization of the std::char_traits template for sf::Uint32
+template <>
+struct char_traits<sf::Uint32>
+{
+    using char_type  = sf::Uint32;
+    using int_type   = int_least64_t;
+    using off_type   = streamoff;
+    using pos_type   = streampos;
+    using state_type = mbstate_t;
+
+    static void assign(char_type& r, const char_type& a) { r = a; }
+    static bool eq(const char_type& a, const char_type& b) { return a == b; }
+    static bool lt(const char_type& a, const char_type& b) { return a < b; }
+    static int compare(const char_type* s1, const char_type* s2, size_t n) { return memcmp(s1, s2, n * sizeof(char_type)); }
+    static size_t length(const char_type* s) { size_t i = 0; while (s[i]) ++i; return i; }
+    static const char_type* find(const char_type* s, size_t n, const char_type& a) { for (size_t i = 0; i < n; ++i) if (eq(s[i], a)) return s + i; return nullptr; }
+    static char_type* move(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memmove(s1, s2, n * sizeof(char_type))); }
+    static char_type* copy(char_type* s1, const char_type* s2, size_t n) { return static_cast<char_type*>(memcpy(s1, s2, n * sizeof(char_type))); }
+    static char_type* assign(char_type* s, size_t n, char_type a) { for (size_t i = 0; i < n; ++i) s[i] = a; return s; }
+    static int_type not_eof(const int_type& e) { return (e == eof()) ? 0 : e; }
+    static char_type to_char_type(const int_type& e) { return static_cast<char_type>(e); }
+    static int_type to_int_type(const char_type& c) { return static_cast<int_type>(c); }
+    static bool eq_int_type(const int_type& e1, const int_type& e2) { return e1 == e2; }
+    static int_type eof() { return static_cast<int_type>(-1); }
+};
+} // namespace std
 
 namespace sf
 {
